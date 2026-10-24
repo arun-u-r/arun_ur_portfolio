@@ -1,0 +1,183 @@
+diff --git a/dist/events-0dab3c53.cjs.dev.js b/dist/events-0dab3c53.cjs.dev.js
+index 705fbd514d4207a07fb3c6c28e631903746d5789..f1d5d5df65bc094c0417243f93407ba92de63e4b 100644
+--- a/dist/events-0dab3c53.cjs.dev.js
++++ b/dist/events-0dab3c53.cjs.dev.js
+@@ -1161,6 +1161,47 @@ function attempt$1(step) {
+ }
+ 
+ const context = /* @__PURE__ */React__namespace.createContext(null);
++const createTimerClock = () => {
++  let timer = new THREE__namespace.Timer();
++  if (typeof document !== 'undefined') timer.connect(document);
++  const clock = {
++    autoStart: true,
++    elapsedTime: 0,
++    oldTime: 0,
++    running: false,
++    start() {
++      timer.dispose();
++      timer = new THREE__namespace.Timer();
++      if (typeof document !== 'undefined') timer.connect(document);
++      timer.update();
++      clock.elapsedTime = 0;
++      clock.oldTime = 0;
++      clock.running = true;
++    },
++    stop() {
++      if (clock.running) clock.getDelta();
++      timer.dispose();
++      clock.running = false;
++    },
++    getDelta() {
++      if (!clock.running) {
++        if (clock.autoStart) clock.start();
++        else return 0;
++      }
++      timer.update();
++      const delta = timer.getDelta();
++      clock.oldTime = clock.elapsedTime;
++      clock.elapsedTime = timer.getElapsed();
++      return delta;
++    },
++    getElapsedTime() {
++      clock.getDelta();
++      return clock.elapsedTime;
++    }
++  };
++  return clock;
++};
++
+ const createStore = (invalidate, advance) => {
+   const rootStore = traditional.createWithEqualityFn((set, get) => {
+     const position = new THREE__namespace.Vector3();
+@@ -1229,7 +1270,7 @@ const createStore = (invalidate, advance) => {
+       linear: false,
+       flat: false,
+       controls: null,
+-      clock: new THREE__namespace.Clock(),
++      clock: createTimerClock(),
+       pointer,
+       mouse: pointer,
+       frameloop: 'always',
+diff --git a/dist/events-98e95d43.cjs.prod.js b/dist/events-98e95d43.cjs.prod.js
+index c265e9e358f1fd6d7155216b013471ab445b9ce4..642f72d5f40e4f7706b1fc93bd6a6e90a32c67d0 100644
+--- a/dist/events-98e95d43.cjs.prod.js
++++ b/dist/events-98e95d43.cjs.prod.js
+@@ -1161,6 +1161,47 @@ function attempt$1(step) {
+ }
+ 
+ const context = /* @__PURE__ */React__namespace.createContext(null);
++const createTimerClock = () => {
++  let timer = new THREE__namespace.Timer();
++  if (typeof document !== 'undefined') timer.connect(document);
++  const clock = {
++    autoStart: true,
++    elapsedTime: 0,
++    oldTime: 0,
++    running: false,
++    start() {
++      timer.dispose();
++      timer = new THREE__namespace.Timer();
++      if (typeof document !== 'undefined') timer.connect(document);
++      timer.update();
++      clock.elapsedTime = 0;
++      clock.oldTime = 0;
++      clock.running = true;
++    },
++    stop() {
++      if (clock.running) clock.getDelta();
++      timer.dispose();
++      clock.running = false;
++    },
++    getDelta() {
++      if (!clock.running) {
++        if (clock.autoStart) clock.start();
++        else return 0;
++      }
++      timer.update();
++      const delta = timer.getDelta();
++      clock.oldTime = clock.elapsedTime;
++      clock.elapsedTime = timer.getElapsed();
++      return delta;
++    },
++    getElapsedTime() {
++      clock.getDelta();
++      return clock.elapsedTime;
++    }
++  };
++  return clock;
++};
++
+ const createStore = (invalidate, advance) => {
+   const rootStore = traditional.createWithEqualityFn((set, get) => {
+     const position = new THREE__namespace.Vector3();
+@@ -1229,7 +1270,7 @@ const createStore = (invalidate, advance) => {
+       linear: false,
+       flat: false,
+       controls: null,
+-      clock: new THREE__namespace.Clock(),
++      clock: createTimerClock(),
+       pointer,
+       mouse: pointer,
+       frameloop: 'always',
+diff --git a/dist/events-e51d7528.esm.js b/dist/events-e51d7528.esm.js
+index 6c801a280936890feb78c502a0bf47cd2b478e15..911630056c889a7af9089358f3166e76f5972bb8 100644
+--- a/dist/events-e51d7528.esm.js
++++ b/dist/events-e51d7528.esm.js
+@@ -1136,6 +1136,47 @@ function attempt$1(step) {
+ }
+ 
+ const context = /* @__PURE__ */React.createContext(null);
++const createTimerClock = () => {
++  let timer = new THREE.Timer();
++  if (typeof document !== 'undefined') timer.connect(document);
++  const clock = {
++    autoStart: true,
++    elapsedTime: 0,
++    oldTime: 0,
++    running: false,
++    start() {
++      timer.dispose();
++      timer = new THREE.Timer();
++      if (typeof document !== 'undefined') timer.connect(document);
++      timer.update();
++      clock.elapsedTime = 0;
++      clock.oldTime = 0;
++      clock.running = true;
++    },
++    stop() {
++      if (clock.running) clock.getDelta();
++      timer.dispose();
++      clock.running = false;
++    },
++    getDelta() {
++      if (!clock.running) {
++        if (clock.autoStart) clock.start();
++        else return 0;
++      }
++      timer.update();
++      const delta = timer.getDelta();
++      clock.oldTime = clock.elapsedTime;
++      clock.elapsedTime = timer.getElapsed();
++      return delta;
++    },
++    getElapsedTime() {
++      clock.getDelta();
++      return clock.elapsedTime;
++    }
++  };
++  return clock;
++};
++
+ const createStore = (invalidate, advance) => {
+   const rootStore = createWithEqualityFn((set, get) => {
+     const position = new THREE.Vector3();
+@@ -1204,7 +1245,7 @@ const createStore = (invalidate, advance) => {
+       linear: false,
+       flat: false,
+       controls: null,
+-      clock: new THREE.Clock(),
++      clock: createTimerClock(),
+       pointer,
+       mouse: pointer,
+       frameloop: 'always',
