@@ -49,38 +49,21 @@ export default function ProjectsSection() {
 
   const handleScenePointerMove = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType !== "mouse") return;
-
     const bounds = event.currentTarget.getBoundingClientRect();
-    event.currentTarget.style.setProperty(
-      "--scene-x",
-      `${event.clientX - bounds.left}px`,
-    );
-    event.currentTarget.style.setProperty(
-      "--scene-y",
-      `${event.clientY - bounds.top}px`,
-    );
+    event.currentTarget.style.setProperty("--scene-x", `${event.clientX - bounds.left}px`);
+    event.currentTarget.style.setProperty("--scene-y", `${event.clientY - bounds.top}px`);
   };
 
   const handleSceneClick = (event: MouseEvent<HTMLElement>) => {
     if (event.detail === 0) return;
-
     const section = event.currentTarget;
     const bounds = section.getBoundingClientRect();
-    section.style.setProperty(
-      "--click-x",
-      `${event.clientX - bounds.left}px`,
-    );
-    section.style.setProperty(
-      "--click-y",
-      `${event.clientY - bounds.top}px`,
-    );
+    section.style.setProperty("--click-x", `${event.clientX - bounds.left}px`);
+    section.style.setProperty("--click-y", `${event.clientY - bounds.top}px`);
     section.classList.remove("is-clicking");
     void section.offsetWidth;
     section.classList.add("is-clicking");
-
-    if (clickTimeoutRef.current !== null) {
-      window.clearTimeout(clickTimeoutRef.current);
-    }
+    if (clickTimeoutRef.current !== null) window.clearTimeout(clickTimeoutRef.current);
     clickTimeoutRef.current = window.setTimeout(() => {
       section.classList.remove("is-clicking");
       clickTimeoutRef.current = null;
@@ -94,29 +77,15 @@ export default function ProjectsSection() {
 
   const handlePointerMove = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType !== "mouse") return;
-
     const bounds = event.currentTarget.getBoundingClientRect();
     const x = (event.clientX - bounds.left) / bounds.width;
     const y = (event.clientY - bounds.top) / bounds.height;
-
     event.currentTarget.style.setProperty("--pointer-x", `${x * 100}%`);
     event.currentTarget.style.setProperty("--pointer-y", `${y * 100}%`);
-    event.currentTarget.style.setProperty(
-      "--magnet-x",
-      `${(x - 0.5) * 9}px`,
-    );
-    event.currentTarget.style.setProperty(
-      "--magnet-y",
-      `${(y - 0.5) * 9}px`,
-    );
-    event.currentTarget.style.setProperty(
-      "--tilt-x",
-      `${(x - 0.5) * 5}deg`,
-    );
-    event.currentTarget.style.setProperty(
-      "--tilt-y",
-      `${(0.5 - y) * 5}deg`,
-    );
+    event.currentTarget.style.setProperty("--magnet-x", `${(x - 0.5) * 9}px`);
+    event.currentTarget.style.setProperty("--magnet-y", `${(y - 0.5) * 9}px`);
+    event.currentTarget.style.setProperty("--tilt-x", `${(x - 0.5) * 5}deg`);
+    event.currentTarget.style.setProperty("--tilt-y", `${(0.5 - y) * 5}deg`);
   };
 
   const resetPointer = (event: PointerEvent<HTMLElement>) => {
@@ -128,40 +97,69 @@ export default function ProjectsSection() {
     event.currentTarget.style.removeProperty("--pointer-y");
   };
 
-  const renderProjectCard = (
-    project: (typeof projects)[number],
-    index: number,
-  ) => (
-    <article
-      className="project-card"
-      key={project.title}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={resetPointer}
-    >
-      <div className={`project-preview preview-${(index % 6) + 1}`} aria-hidden="true">
-        <span className="preview-orbit" />
-        <span className="preview-planet" />
-        <span className="preview-caption">PREVIEW PLACEHOLDER</span>
-        <span className="preview-index">{String(index + 1).padStart(2, "0")}</span>
-      </div>
-      <div className="project-card-content">
-        <div className="project-title-row">
-          <h3>{project.title}</h3>
-          <span className="project-status">EDITABLE</span>
+  const renderProjectCard = (project: any, index: number) => {
+    const hasImage = project.image && project.image !== "";
+    const hasLive = project.liveUrl && project.liveUrl !== "" && project.liveUrl !== "#";
+    const hasGithub = project.githubUrl && project.githubUrl !== "";
+
+    return (
+      <article
+        className="project-card"
+        key={project.title + index}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={resetPointer}
+      >
+        <div className={`project-preview preview-${(index % 6) + 1}`} aria-hidden="true">
+          {hasImage ? (
+            <img
+              src={project.image}
+              alt={project.title}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <>
+              <span className="preview-orbit" />
+              <span className="preview-planet" />
+              <span className="preview-caption">PREVIEW PLACEHOLDER</span>
+            </>
+          )}
+          <span className="preview-index">{String(index + 1).padStart(2, "0")}</span>
         </div>
-        <p>{project.description}</p>
-        <ul className="project-tags" aria-label="Technology placeholders">
-          {project.technologies.map((technology, tagIndex) => (
-            <li key={`${technology}-${tagIndex}`}>{technology}</li>
-          ))}
-        </ul>
-        <div className="project-links" aria-label="Project links not provided">
-          <span>Live demo not provided</span>
-          <span>GitHub not provided</span>
+
+        <div className="project-card-content">
+          <div className="project-title-row">
+            <h3>{project.title}</h3>
+            <span className="project-status">{project.status || "EDITABLE"}</span>
+          </div>
+
+          <p>{project.description}</p>
+
+          <ul className="project-tags" aria-label="Technologies">
+            {project.technologies.map((technology: string, tagIndex: number) => (
+              <li key={`${technology}-${tagIndex}`}>{technology}</li>
+            ))}
+          </ul>
+
+          <div className="project-links" aria-label="Project links">
+            {hasLive ? (
+              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                Live Demo →
+              </a>
+            ) : (
+              <span>Live demo not provided</span>
+            )}
+            {hasGithub ? (
+              <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                GitHub
+              </a>
+            ) : (
+              <span>GitHub not provided</span>
+            )}
+          </div>
         </div>
-      </div>
-    </article>
-  );
+      </article>
+    );
+  };
 
   return (
     <section
@@ -207,13 +205,6 @@ export default function ProjectsSection() {
             <div className="project-page">
               <div className="project-grid">
                 {projects.map((project, index) => renderProjectCard(project, index))}
-              </div>
-            </div>
-            <div className="project-page">
-              <div className="project-grid">
-                {otherProjects.map((project, index) =>
-                  renderProjectCard(project, projects.length + index),
-                )}
               </div>
             </div>
           </div>

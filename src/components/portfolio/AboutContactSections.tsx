@@ -65,7 +65,7 @@ export function AboutSection() {
       <div className="section-inner about-layout">
         <div className="about-copy">
           <p className="section-eyebrow"><span /> BEYOND THE CODE</p>
-          <h2 id="about-heading">The Mind Behind the Universe</h2>
+          <h2 id="about-heading">The Mind Behind <br /> the Universe</h2>
           <p>{aboutContent.introduction}</p>
           <p>{aboutContent.biography}</p>
           <p className="about-vision">{aboutContent.vision}</p>
